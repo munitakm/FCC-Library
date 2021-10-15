@@ -20,6 +20,7 @@ const schema = new Schema({
   
 })
 const Library = mongoose.model('Library', schema);
+module.exports = Library;
 //------------------
 
 module.exports = function (app) {
@@ -49,7 +50,7 @@ module.exports = function (app) {
       Library.deleteMany((err,deleted) => { 
         if(err) return;
         console.log(deleted)
-        res.send('complete delete successful')
+        res.status(200).send('complete delete successful')
       })
       //if successful response will be 'complete delete successful'
     });
@@ -59,7 +60,7 @@ module.exports = function (app) {
   app.route('/api/books/:id')
     .get(function (req, res){
       let bookid = req.params.id;
-     Library.findOne({_id: bookid}, (err,book) => { 
+     Library.findOne({_id: bookid}, (err,book) => {
       if(err || !book) return res.send('no book exists');
        res.json({title: book.title, _id: book._id, comments: book.comments})
      }) 
@@ -88,9 +89,12 @@ module.exports = function (app) {
       console.log('deleted')
       let bookid = req.params.id;
       Library.findOneAndRemove({_id: bookid}, (err,deleted) => { 
-        if(err || !deleted) return res.send('no book exists');
+        if(err || !deleted) {
+          res.status(200).send('no book exists');
+        } else {
         console.log(deleted)
-        res.send('delete successful')
+        res.status(200).send('delete successful')
+        }
       })
       //if successful response will be 'delete successful'
     });
